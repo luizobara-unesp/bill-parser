@@ -1,0 +1,68 @@
+version: '3.8'
+
+services:
+  # ----------------------------------
+  # 1. Banco de Dados (PostgreSQL)
+  # ----------------------------------
+  postgres-db:
+    image: postgres:16-alpine
+    container_name: bill_parser_postgres_db
+    ports:
+      - "5432:5432" 
+    environment:
+      POSTGRES_DB: bill_parser_db
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: senha_forte_para_producao 
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  # ----------------------------------
+  # 2. Backend (Spring Boot)
+  # ----------------------------------
+  backend:
+    build:
+      context: ./backend
+    container_name: bill_parser_backend
+    ports:
+      - "8080:8080"
+    
+    env_file:
+      - ./backend/.env
+      
+    depends_on:
+      - postgres-db
+      - extractor
+    
+    environment:
+      - EXTRACTOR_API_URL=http://extractor:8000
+
+  # ----------------------------------
+  # 3. Frontend (Next.js)
+  # ----------------------------------
+  frontend:
+    build:
+      context: ./frontend
+    container_name: bill_parser_frontend
+    ports:
+      - "3000:3000"
+    environment:
+      - NEXT_PUBLIC_API_URL=http://localhost:8080/api
+    depends_on:
+      - backend 
+
+  # ----------------------------------
+  # 4. Extrator (FastAPI)
+  # ----------------------------------
+  extractor:
+    build:
+      context: ./extrator-service
+    container_name: bill_parser_extractor
+    ports:
+      - "8001:8000"
+    env_file:
+      - ./extrator-service/.env
+    volumes:
+      - ./extrator-service/app:/code/app
+
+volumes:
+  postgres_data:

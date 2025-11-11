@@ -1,0 +1,24 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+env/
+venv/
+.venv/
+
+# Docker
+.dockerignore
+Dockerfile
+
+# IDEs and editors
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Other
+.env
+.pytest_cache/
+.git
