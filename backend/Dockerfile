@@ -14,9 +14,9 @@ COPY src ./src
 # --no-daemon é recomendado para ambientes de CI/Docker
 RUN gradle bootJar --no-daemon
 
-# --- 2. Estágio de Produção ---
-# Usamos uma imagem JRE (Java Runtime Environment) leve, pois não precisamos mais do JDK/Gradle
-FROM openjdk:17-jre-slim
+# --- 2. Estágio de Produção (A IMAGEM CORRETA) ---
+# Usamos a imagem eclipse-temurin, que é uma JRE Alpine leve e recomendada
+FROM eclipse-temurin:17-jre-alpine
 
 WORKDIR /app
 
