@@ -1,5 +1,5 @@
 # --- 1. Estágio de Build ---
-# Usamos a imagem Node 18-alpine para COMPILAR o projeto
+# Usamos a imagem Node 22-slim para COMPILAR o projeto
 FROM node:22-slim AS builder
 WORKDIR /app
 
@@ -16,8 +16,8 @@ COPY . .
 RUN npm run build
 
 # --- 2. Estágio de Produção ---
-# Usamos uma imagem Node 18-alpine leve para RODAR o app
-FROM node:18-alpine AS runner
+# Usamos uma imagem Node 22-slim leve para RODAR o app
+FROM node:22-slim AS runner
 WORKDIR /app
 
 # Define o ambiente como produção
