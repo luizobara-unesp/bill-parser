@@ -4,7 +4,12 @@ import json
 import pdfplumber
 from groq import Groq
 from dotenv import load_dotenv
-from app.schemas import AnaliseCompletaConta
+from pydantic import BaseModel, ValidationError
+from typing import Type 
+
+from app.schemas import (
+    SchemaGeral, SchemaDiscriminacao, SchemaDemonstrativo, SchemaDadosLeitura
+)
 
 load_dotenv()
 
@@ -31,69 +36,55 @@ class PDFService:
 
 
 class LLMExtractorService:
-    """Chama o LLM (Groq) para extrair dados de um texto."""
+    """
+    Chama o LLM (Groq) em uma estratégia de "Dividir e Conquistar Híbrida"
+    (4 chamadas focadas) para balancear precisão e custo.
+    """
     
     def __init__(self):
         self.client = Groq(api_key=os.environ.get("GROQ_API_KEY"))
         if not self.client.api_key:
             raise EnvironmentError("GROQ_API_KEY não encontrada. Verifique seu arquivo .env.")
         
-        # --- LINHA ALTERADA ---
-        # Trocamos pelo modelo que você encontrou no playground do Groq
-        self.model = "openai/gpt-oss-20b" 
-        # --- FIM DA ALTERAÇÃO ---
+        self.model = "openai/gpt-oss-120b" 
 
-    def _build_prompt(self, raw_text: str) -> str:
-        """Cria o prompt de sistema detalhado."""
+    def _call_llm(self, full_text: str, target_schema: Type[BaseModel], task_prompt: str) -> dict:
+        """
+        Função helper genérica para chamar o LLM com um texto, um schema-alvo
+        e um prompt de tarefa específico.
+        """
+        schema_json = json.dumps(target_schema.model_json_schema(), indent=2)
         
-        schema_json = json.dumps(AnaliseCompletaConta.model_json_schema(), indent=2)
+        system_prompt = f"""
+        Você é um assistente de IA especialista em extração de dados.
+        Sua tarefa é analisar o TEXTO BRUTO de uma fatura de energia e extrair *apenas* as informações solicitadas.
 
-        return f"""
-        Você é um assistente de IA especialista em extração de dados financeiros de faturas.
-        Sua tarefa é analisar o TEXTO BRUTO de uma conta de energia e retornar um objeto JSON estruturado.
+        TAREFA ATUAL: {task_prompt}
 
-        REGRAS IMPORTANTES:
-        1.  **JSON VÁLIDO:** Você DEVE retornar *apenas* um objeto JSON válido, sem nenhum texto antes ou depois (sem "json", sem "```").
-        2.  **SCHEMA OBRIGATÓRIO:** O JSON DEVE seguir rigorosamente este JSON Schema:
-            {schema_json}
-        3.  **OMITIR DADOS PESSOAIS:** Por segurança, NÃO inclua nome do cliente, CPF, CNPJ ou endereço no JSON. Use o valor "DADOS_OCULTADOS" conforme o schema.
-        4.  **DADOS FINANCEIROS:** Converta todos os valores monetários (ex: "185,85") para números (ex: 185.85) com ponto flutuante.
-        5.  **ITENS FATURADOS:** Extraia todos os itens da tabela de discriminação.
-        6.  **TRIBUTOS:** Extraia os tributos (ICMS, PIS, COFINS) da tabela.
-        7.  **AVISOS:** Capture avisos importantes, como "CDE Escassez Hídrica".
-
+        REGRAS:
+        1. Retorne *apenas* um objeto JSON válido.
+        2. Siga rigorosamente este JSON Schema:
+           {schema_json}
+        3. Converta valores monetários (ex: "1.234,56") para números (ex: 1234.56).
+        4. NÃO inclua dados pessoais (Nome, CNPJ, Endereço).
+        
         ---
         TEXTO BRUTO DA FATURA:
         ---
-        {raw_text}
+        {full_text}
         ---
         FIM DO TEXTO BRUTO.
         ---
 
-        Agora, retorne o objeto JSON com os dados extraídos.
+        Agora, retorne o objeto JSON com os dados extraídos para a tarefa solicitada.
         """
 
-    def extract_data_from_text(self, text: str) -> dict:
-        """Chama a API do Groq e retorna o JSON como um dicionário Python."""
-        
-        prompt = self._build_prompt(text)
-
-        print("\n--- PROMPT ENVIADO PARA O GROQ ---")
-        print(prompt)
-        print("--------------------------------------\n")
-        
         try:
             completion = self.client.chat.completions.create(
                 model=self.model,
                 messages=[
-                    {
-                        "role": "system",
-                        "content": prompt 
-                    },
-                    {
-                        "role": "user",
-                        "content": "Por favor, extraia os dados do texto fornecido e retorne APENAS o objeto JSON."
-                    }
+                    {"role": "system", "content": system_prompt},
+                    {"role": "user", "content": f"Por favor, execute a tarefa: {task_prompt}"}
                 ],
                 temperature=0,
                 max_tokens=8192, 
@@ -104,8 +95,76 @@ class LLMExtractorService:
 
             response_content = completion.choices[0].message.content
             json_data = json.loads(response_content)
-            return json_data
+            
+            # Validar com o schema-alvo e criar o objeto
+            # Isso força o Pydantic a aplicar quaisquer valores default (como o 'dados_cliente')
+            validated_model = target_schema(**json_data) 
+            
+            print(f"DEBUG: Extração bem-sucedida para {target_schema.__name__}")
+            
+            # Retornar o DICIONÁRIO do *modelo validado*, que agora inclui os defaults
+            return validated_model.model_dump()
 
+        except ValidationError as e:
+            print(f"ERRO DE VALIDAÇÃO (LLM) para {target_schema.__name__}: {e}")
+            raise ValueError(f"O LLM retornou dados inválidos para {target_schema.__name__}. Erro: {e}")
         except Exception as e:
-            print(f"Erro na chamada do Groq: {e}")
+            print(f"Erro na chamada do Groq para {target_schema.__name__}: {e}")
             raise ValueError(f"Erro ao comunicar com o LLM: {str(e)}")
+
+    def extract_data(self, text: str) -> dict:
+        """
+        Orquestrador principal (4 chamadas). Chama o LLM para cada "zona"
+        e combina os resultados.
+        """
+        
+        dados_gerais = self._call_llm(
+            full_text=text,
+            target_schema=SchemaGeral,
+            task_prompt="""
+            Extraia todos os dados gerais: valor_total_pagar, data_vencimento, mes_referencia_geral, dias_faturamento,
+            avisos_importantes, bandeira_tarifaria, demanda_contratada (ex: Única 206kW), datas_leitura, 
+            tarifas_aneel, equipamentos_medicao, niveis_tensao, e indicadores_continuidade.
+            NÃO extraia as tabelas 'DISCRIMINAÇÃO', 'DEMONSTRATIVO' ou 'DADOS DE LEITURA' nesta etapa.
+            """
+        )
+
+        discriminacao = self._call_llm(
+            full_text=text,
+            target_schema=SchemaDiscriminacao,
+            task_prompt="""
+            Extraia *apenas* a lista de 'itens_faturados' e 'tributos_detalhados' (PIS, COFINS linha a linha) 
+            da tabela 'DISCRIMINAÇÃO DA OPERAÇÃO'.
+            Para 'Adicional Band', a 'quantidade' deve ser null.
+            """
+        )
+        
+        demonstrativo = self._call_llm(
+            full_text=text,
+            target_schema=SchemaDemonstrativo,
+            task_prompt="""
+            Extraia o 'DEMONSTRATIVO DE UTILIZAÇÃO' (histórico) da página 3.
+            1. Preencha 'consumo_ponta_kwh' e 'consumo_fora_ponta_kwh' com os valores do mês de referência (ex: 2568.96 e 23451.3 para JUN/2025).
+            2. Preencha 'demonstrativo_utilizacao' com o histórico de 12 meses.
+            3. CRÍTICO: Para 'demonstrativo_utilizacao.demanda', use *exclusivamente* a tabela 'Demanda - [kW]' 
+               (ex: 88,00 para JUN/2025, 143,00 para MAI). NÃO USE os valores da 'Discriminação' (ex: 88.32 ou 117.68).
+            """
+        )
+
+        dados_leitura = self._call_llm(
+            full_text=text,
+            target_schema=SchemaDadosLeitura,
+            task_prompt="""
+            Extraia *apenas* a tabela 'DADOS DE LEITURA' (com colunas 'Atual', 'Anter', 'Ft. Multip'). 
+            Não confunda com o histórico 'Demonstrativo'.
+            """
+        )
+
+        final_data = {
+            **dados_gerais,
+            **discriminacao,
+            **demonstrativo,
+            **dados_leitura
+        }
+
+        return final_data
