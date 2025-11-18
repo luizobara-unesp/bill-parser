@@ -10,6 +10,10 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.billparser.backend.dto.extractor.BillSavedResponse;
+
+import java.math.BigDecimal;
+
 @RestController
 @RequestMapping("/api/v1/bills")
 @RequiredArgsConstructor
@@ -17,13 +21,31 @@ public class BillController {
 
     private final BillService billService;
 
-    @PostMapping("/upload")
-    public ResponseEntity<Bill> uploadBill(
-            @RequestParam("file") MultipartFile file,
+    @PostMapping
+    public ResponseEntity<BillSavedResponse> createBill(
+            @RequestBody AnalysisCompletaConta billData,
             @RequestParam("workspaceId") Long workspaceId
     ) {
         User currentUser = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        Bill savedBill = billService.processAndSaveBill(file, workspaceId, currentUser);
-        return ResponseEntity.ok(savedBill);
+        Bill savedBill = billService.saveBillFromDTO(billData, workspaceId, currentUser);
+
+        BillSavedResponse response = BillSavedResponse.builder()
+                .id(savedBill.getId())
+                .valorTotalPagar(BigDecimal.valueOf(savedBill.getValorTotalPagar()))
+                .mesReferenciaGeral(savedBill.getMesReferenciaGeral())
+                .savedByUserId(currentUser.getId())
+                .statusMessage("Conta ID " + savedBill.getId() + " salva e aprovada com sucesso.")
+                .build();
+        return ResponseEntity.ok(response);
     }
+
+    @PostMapping("/extract")
+    public ResponseEntity<AnalysisCompletaConta> extractBillData(
+            @RequestParam("file") MultipartFile file
+    ) {
+        AnalysisCompletaConta extractedData = billService.extractOnly(file);
+        return ResponseEntity.ok(extractedData);
+    }
+
+
 }

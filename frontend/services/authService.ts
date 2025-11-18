@@ -25,3 +25,9 @@ export const loginUser = async (data: LoginRequest) => {
   const response = await api.post<AuthResponse>('/auth/login', data);
   return response.data;
 };
+
+export const logoutUser = () => {
+  localStorage.removeItem('token');
+  localStorage.removeItem('email');
+  delete api.defaults.headers.common['Authorization'];
+};

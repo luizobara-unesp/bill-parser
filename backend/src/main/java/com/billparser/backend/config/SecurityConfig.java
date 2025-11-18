@@ -30,6 +30,8 @@ public class SecurityConfig {
                 )
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers("/api/auth/**").permitAll()
+                        .requestMatchers("/error").permitAll()
+                        .requestMatchers("/api/v1/bills/**").authenticated()
                         .anyRequest().authenticated()
                 )
                 .authenticationProvider(authenticationProvider)
