@@ -1,12 +1,52 @@
 "use client"; 
 
+import { useEffect, useState } from "react";
 import { PageGuard } from "@/components/page-guard";
 import { UploadBillDialog } from "@/components/bills/upload-bill-dialog";
+import { getBills } from "@/services/billService"; 
+import { BillSavedResponse } from "@/types/bill";
+import { BillCard } from "@/components/bills/bill-card"; 
+import { toast } from "sonner";
+
+import { BillPagination } from "@/components/bills/bill-pagination";
 
 export default function BillPage() {
+  const [bills, setBills] = useState<BillSavedResponse[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  
+  const [currentPage, setCurrentPage] = useState(0); 
+  const [totalPages, setTotalPages] = useState(0);
+  const pageSize = 8; 
+
+  const fetchBills = async (page: number) => {
+    try {
+      setIsLoading(true);
+      const workspaceId = 1; 
+      
+      const data = await getBills({ 
+        workspaceId, 
+        page: page, 
+        size: pageSize 
+      });
+
+      setBills(data.content);
+      setTotalPages(data.totalPages);
+      setCurrentPage(data.number); 
+    } catch (error) {
+      console.error(error);
+      toast.error("Erro ao carregar contas.");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchBills(currentPage);
+  }, [currentPage]);
+
   return (
     <PageGuard>
-      <div className="w-full p-6">
+      <div className="w-full p-6 max-w-7xl mx-auto">
         <div className="flex justify-between items-center mb-6">
            <h3 className="font-bold text-2xl uppercase">Contas de Consumo</h3>
         </div>
@@ -15,11 +55,34 @@ export default function BillPage() {
           
           <UploadBillDialog />
 
-           <div className="bg-gray-100 border rounded-lg w-full h-40 flex items-center justify-center text-gray-400">
-             Espaço Vazio
-          </div>
+          {isLoading ? (
+             Array.from({ length: 5 }).map((_, i) => (
+               <div key={i} className="bg-gray-100 animate-pulse rounded-lg w-full h-40" />
+             ))
+          ) : (
+            <>
+              {bills.map((bill) => (
+                <BillCard key={bill.id} bill={bill} />
+              ))}
+            </>
+          )}
+          
+          {!isLoading && bills.length === 0 && (
+             <div className="col-span-full flex justify-center items-center h-40 text-gray-400 bg-gray-50 border border-dashed rounded-lg">
+                Nenhuma conta encontrada. Adicione a primeira!
+             </div>
+          )}
 
         </div>
+
+        {!isLoading && bills.length > 0 && (
+          <BillPagination 
+            currentPage={currentPage}
+            totalPages={totalPages}
+            onPageChange={setCurrentPage} 
+          />
+        )}
+        
       </div>
     </PageGuard>
   );
