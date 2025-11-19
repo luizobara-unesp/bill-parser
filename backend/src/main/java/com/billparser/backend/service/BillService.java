@@ -179,4 +179,46 @@ public class BillService {
                 .build()
         );
     }
+
+    public AnalysisCompletaConta getBillById(Long billId, User user) {
+        Bill bill = billRepository.findById(billId)
+                .orElseThrow(() -> new RuntimeException("Conta não encontrada"));
+
+        if (!bill.getWorkspace().getUser().getId().equals(user.getId())) {
+            throw new SecurityException("Acesso negado.");
+        }
+
+        AnalysisCompletaConta dto = new AnalysisCompletaConta();
+        dto.setValor_total_pagar(bill.getValorTotalPagar());
+        dto.setData_vencimento(bill.getDataVencimento().format(DATE_FORMATTER));
+        dto.setMes_referencia_geral(bill.getMesReferenciaGeral());
+
+        dto.setDias_faturamento(bill.getDiasFaturamento());
+        dto.setBandeira_tarifaria(bill.getBandeiraTarifaria());
+
+        List<ItemFaturado> itensDto = new ArrayList<>();
+        for (BillItem item : bill.getItens()) {
+            ItemFaturado i = new ItemFaturado();
+            i.setDescricao(item.getDescricao());
+            i.setMes_referencia(item.getMesReferencia());
+            i.setQuantidade(item.getQuantidade());
+            i.setValor_total(item.getValorTotal());
+            itensDto.add(i);
+        }
+        dto.setItens_faturados(itensDto);
+
+        List<Tributo> taxDto = new ArrayList<>();
+        for (BillTax tax : bill.getTributos()) {
+            Tributo t = new Tributo();
+            t.setNome(tax.getNome());
+            t.setBase_calculo(tax.getBaseCalculo());
+            t.setAliquota(tax.getAliquota());
+            t.setValor(tax.getValor());
+            taxDto.add(t);
+        }
+        dto.setTributos_detalhados(taxDto);
+
+        return dto;
+    }
+
 }

@@ -64,4 +64,11 @@ public class BillController {
         return ResponseEntity.ok(bills);
     }
 
+    @GetMapping("/{id}")
+    public ResponseEntity<AnalysisCompletaConta> getBillDetails(@PathVariable Long id) {
+        User currentUser = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        AnalysisCompletaConta billDetails = billService.getBillById(id, currentUser);
+        return ResponseEntity.ok(billDetails);
+    }
+
 }
