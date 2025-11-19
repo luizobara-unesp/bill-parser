@@ -1,6 +1,7 @@
 "use client";
 
 import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import api from '@/lib/api';
 
 interface AuthContextType {
   token: string | null;
@@ -25,6 +26,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       if (storedToken) {
         setToken(storedToken);
         setEmail(storedEmail);
+        api.defaults.headers.common['Authorization'] = `Bearer ${storedToken}`;
       }
     } catch (error) {
       console.error("Falha ao carregar o token do localStorage", error)
@@ -38,6 +40,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setEmail(newEmail);
     localStorage.setItem('token', newToken);
     localStorage.setItem('email', newEmail);
+    api.defaults.headers.common['Authorization'] = `Bearer ${newToken}`;
   };
 
   const logout = () => {
@@ -45,6 +48,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setEmail(null);
     localStorage.removeItem('token');
     localStorage.removeItem('email');
+    delete api.defaults.headers.common['Authorization'];
   };
 
   const isAuthenticated = !!token;

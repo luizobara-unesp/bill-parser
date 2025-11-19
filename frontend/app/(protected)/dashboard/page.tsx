@@ -1,7 +1,9 @@
+import { PageGuard } from "@/components/page-guard";
+
 export default function DashboardPage() {
-    return (
-        <div className="">
-            
-        </div>
-    )
+  return (
+    <PageGuard>
+      <h1>Dashboard</h1>
+    </PageGuard>
+  );
 }

@@ -46,7 +46,7 @@ class LLMExtractorService:
         if not self.client.api_key:
             raise EnvironmentError("GROQ_API_KEY não encontrada. Verifique seu arquivo .env.")
         
-        self.model = "openai/gpt-oss-120b" 
+        self.model = "openai/gpt-oss-20b" 
 
     def _call_llm(self, full_text: str, target_schema: Type[BaseModel], task_prompt: str) -> dict:
         """
