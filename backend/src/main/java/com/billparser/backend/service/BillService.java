@@ -1,4 +1,5 @@
 package com.billparser.backend.service;
+
 import com.billparser.backend.client.ExtractorClient;
 import com.billparser.backend.dto.extractor.AnalysisCompletaConta;
 import com.billparser.backend.dto.extractor.ItemFaturado;
@@ -11,6 +12,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import com.billparser.backend.dto.extractor.BillSavedResponse;
+
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -151,5 +157,26 @@ public class BillService {
         bill.setTributos(taxes);
 
         return billRepository.save(bill);
+    }
+
+    public Page<BillSavedResponse> getAllBills(Long workspaceId, User user, Pageable pageable) {
+
+        Workspace workspace = workspaceRepository.findById(workspaceId)
+                .orElseThrow(() -> new RuntimeException("Workspace não encontrado!"));
+
+        if (!workspace.getUser().getId().equals(user.getId())) {
+            throw new SecurityException("Acesso negado.");
+        }
+
+        Page<Bill> billsPage = billRepository.findAllByWorkspaceId(workspaceId, pageable);
+
+        return billsPage.map(bill -> BillSavedResponse.builder()
+                .id(bill.getId())
+                .valorTotalPagar(BigDecimal.valueOf(bill.getValorTotalPagar()))
+                .mesReferenciaGeral(bill.getMesReferenciaGeral())
+                .savedByUserId(user.getId())
+                .statusMessage("OK")
+                .build()
+        );
     }
 }

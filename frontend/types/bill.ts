@@ -135,3 +135,14 @@ export interface BillSavedResponse {
     statusMessage: string;
     savedByUserId: number;
 }
+
+export interface PageableResponse<T> {
+    content: T[];
+    totalPages: number;
+    totalElements: number;
+    size: number;
+    number: number;
+    first: boolean;
+    last: boolean;
+    empty: boolean;
+}

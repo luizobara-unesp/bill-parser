@@ -64,7 +64,7 @@ export function UploadBillDialog() {
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>
-        <div className="border-2 border-dashed border-gray-300 rounded-lg w-full h-40 flex flex-col items-center justify-center cursor-pointer hover:bg-gray-50 hover:border-primary transition-colors gap-2 text-gray-500 hover:text-primary">
+        <div className="border-2 border-dashed border-gray-300 rounded-lg w-full h-40 min-h-full flex flex-col items-center justify-center cursor-pointer hover:bg-gray-50 hover:border-primary transition-colors gap-2 text-gray-500 hover:text-primary">
           <UploadCloud className="w-10 h-10" />
           <span className="font-medium">Adicionar Nova Conta</span>
         </div>
