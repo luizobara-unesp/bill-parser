@@ -33,6 +33,21 @@ export function UploadBillDialog() {
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
+      const selectedFile = e.target.files[0];
+
+      const MAX_SIZE_MB = 1;
+      const MAX_SIZE_BYTES = MAX_SIZE_MB * 1024 * 1024;
+
+      if(selectedFile.size > MAX_SIZE_BYTES) {
+        toast.error(`O arquivo excede o limite de ${MAX_SIZE_MB}MB.`);
+        return;
+      }
+
+      if(selectedFile.type !== "application/pdf") {
+        toast.error("Envie apenas arquivos em PDF.");
+        return;
+      }
+
       setFile(e.target.files[0]);
       setResult(null);
     }
