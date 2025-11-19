@@ -1,4 +1,5 @@
 import "./globals.css";
+import { Toaster } from "sonner";
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import { AuthProvider } from "@/context/AuthContext";
@@ -20,7 +21,10 @@ export default function RootLayout({
     <html lang="en" suppressHydrationWarning>
       <body className={inter.className}>
         <AuthProvider>
-          <BillReviewProvider>{children}</BillReviewProvider>
+          <BillReviewProvider>
+            {children}
+            <Toaster/>
+          </BillReviewProvider>
         </AuthProvider>
       </body>
     </html>
