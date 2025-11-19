@@ -40,3 +40,12 @@ export const getBills = async ({ workspaceId, page = 0, size = 10 }: GetBillsPar
   );
   return response.data;
 };
+
+export const getBillById = async (id: number): Promise<AnaliseCompletaConta> => {
+  const response = await api.get<AnaliseCompletaConta>(`/v1/bills/${id}`);
+  return response.data;
+};
+
+export const updateBill = async (id: number, data: AnaliseCompletaConta): Promise<void> => {
+    await api.put(`/v1/bills/${id}`, data); 
+};

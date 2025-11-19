@@ -1,17 +1,18 @@
-"use client"
+"use client";
 
 import * as React from "react";
 
 import {
-  AudioWaveform,
-  BookOpen,
   Command,
-  GalleryVerticalEnd,
+  ChartBar,
   Clipboard,
+  AudioWaveform,
+  GalleryVerticalEnd,
 } from "lucide-react";
 
 import { NavMain } from "./nav-main";
 import { NavUser } from "./nav-user";
+import { NavAdmin } from "./nav-admin";
 import { TeamSwitcher } from "./team-switcher";
 
 import {
@@ -48,13 +49,13 @@ const data = {
   navMain: [
     {
       title: "Contas de Consumo",
-      url: "bill",
+      url: "bills",
       icon: Clipboard,
       isActive: true,
       items: [
         {
           title: "Energia",
-          url: "/bill/",
+          url: "/bills/",
         },
         {
           title: "Telefonia",
@@ -62,35 +63,20 @@ const data = {
         },
         {
           title: "Água",
-          url: "//",
+          url: "/",
         },
       ],
     },
-    {
-      title: "Documentation",
-      url: "#",
-      icon: BookOpen,
-      items: [
-        {
-          title: "Introduction",
-          url: "#",
-        },
-        {
-          title: "Get Started",
-          url: "#",
-        },
-        {
-          title: "Tutorials",
-          url: "#",
-        },
-        {
-          title: "Changelog",
-          url: "#",
-        },
-      ],
-    }
-  ]
-}
+  ],
+};
+
+const items = [
+  {
+    title: "Dashboard",
+    url: "dashboard",
+    icon: ChartBar,
+  },
+];
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   return (
@@ -98,13 +84,17 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       <SidebarHeader>
         <TeamSwitcher teams={data.teams} />
       </SidebarHeader>
+
       <SidebarContent>
+        <NavAdmin items={items}/>
         <NavMain items={data.navMain} />
       </SidebarContent>
+
       <SidebarFooter>
         <NavUser user={data.user} />
       </SidebarFooter>
+
       <SidebarRail />
     </Sidebar>
-  )
+  );
 }

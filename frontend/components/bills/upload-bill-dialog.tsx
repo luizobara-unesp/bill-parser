@@ -52,7 +52,7 @@ export function UploadBillDialog() {
       setResult(data);
       setReviewData(data);
       setIsOpen(false);
-      router.push("/bill/review");
+      router.push("/bills/review");
     } catch (error) {
       console.error(error);
       toast.error("Erro ao processar a conta. Tente novamente.");

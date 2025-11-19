@@ -26,7 +26,7 @@ export default function BillReviewPage() {
 
   useEffect(() => {
     if (!reviewData) {
-      router.push("/bill");
+      router.push("/bills");
     }
   }, [reviewData, router]);
 
@@ -45,7 +45,7 @@ export default function BillReviewPage() {
 
       toast.success("Conta salva com sucesso!");
       
-      router.push("/bill"); 
+      router.push("/bills"); 
 
     } catch (error) {
       console.error(error);
