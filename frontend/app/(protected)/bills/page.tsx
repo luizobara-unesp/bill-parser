@@ -1,13 +1,11 @@
 "use client"; 
 
-import { useEffect, useState } from "react";
-import { PageGuard } from "@/components/page-guard";
-import { UploadBillDialog } from "@/components/bills/upload-bill-dialog";
-import { getBills } from "@/services/billService"; 
-import { BillSavedResponse } from "@/types/bill";
-import { BillCard } from "@/components/bills/bill-card"; 
 import { toast } from "sonner";
-
+import { useEffect, useState } from "react";
+import { BillSavedResponse } from "@/types/bill";
+import { getBills } from "@/services/billService";
+import { PageGuard } from "@/components/page-guard";
+import { BillCard } from "@/components/bills/bill-card";
 import { BillPagination } from "@/components/bills/bill-pagination";
 
 export default function BillPage() {
@@ -52,12 +50,9 @@ export default function BillPage() {
         </div>
         
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-          
-          <UploadBillDialog />
-
           {isLoading ? (
-             Array.from({ length: 5 }).map((_, i) => (
-               <div key={i} className="bg-gray-100 animate-pulse rounded-lg w-full h-40" />
+             Array.from({ length: 6 }).map((_, i) => (
+               <div key={i} className="bg-gray-100 animate-pulse rounded-lg w-full h-50" />
              ))
           ) : (
             <>
