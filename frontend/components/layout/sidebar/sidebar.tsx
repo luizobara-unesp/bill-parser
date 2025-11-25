@@ -1,19 +1,27 @@
 "use client";
 
 import * as React from "react";
-
 import {
-  Command,
-  ChartBar,
-  Clipboard,
-  AudioWaveform,
+  LayoutDashboard,
+  Receipt,
+  FileBarChart,
+  Settings,
+  Building2,
+  AlertCircle,
   GalleryVerticalEnd,
+  AudioWaveform,
+  Command,
+  UploadCloud,
+  ListFilter,
+  Users,
+  LifeBuoy,
+  Send
 } from "lucide-react";
 
 import { NavMain } from "./nav-main";
 import { NavUser } from "./nav-user";
-import { NavAdmin } from "./nav-admin";
 import { TeamSwitcher } from "./team-switcher";
+import { NavSecondary } from "./nav-secondary"; 
 
 import {
   Sidebar,
@@ -25,58 +33,100 @@ import {
 
 const data = {
   user: {
-    name: "shadcn",
-    email: "m@example.com",
+    name: "Luiz Obara",
+    email: "luiz@exemplo.com",
     avatar: "https://github.com/luizobara.png",
   },
   teams: [
     {
-      name: "Acme Inc",
+      name: "Minha Empresa",
       logo: GalleryVerticalEnd,
       plan: "Enterprise",
     },
     {
-      name: "Acme Corp.",
+      name: "Projeto Pessoal",
       logo: AudioWaveform,
-      plan: "Startup",
-    },
-    {
-      name: "Evil Corp.",
-      logo: Command,
       plan: "Free",
     },
   ],
   navMain: [
     {
-      title: "Contas de Consumo",
-      url: "bills",
-      icon: Clipboard,
+      title: "Dashboard",
+      url: "/dashboard",
+      icon: LayoutDashboard,
       isActive: true,
+    },
+    {
+      title: "Contas e Faturas",
+      url: "/bills",
+      icon: Receipt,
       items: [
         {
-          title: "Energia",
-          url: "/bills/",
+          title: "Visão Geral",
+          url: "/bills",
+          icon: ListFilter
         },
         {
-          title: "Telefonia",
-          url: "/dashboard/",
-        },
-        {
-          title: "Água",
-          url: "/",
+          title: "Novo Upload",
+          url: "/bills/upload", 
+          icon: UploadCloud
         },
       ],
     },
+    {
+      title: "Relatórios",
+      url: "/reports",
+      icon: FileBarChart,
+      items: [
+        {
+          title: "Consumo vs Custo",
+          url: "/reports/consumption",
+        },
+        {
+          title: "Histórico Anual",
+          url: "/reports/history",
+        },
+      ],
+    },
+    {
+      title: "Cadastros",
+      url: "/register",
+      icon: Building2,
+      items: [
+        {
+          title: "Unidades / Locais",
+          url: "/units",
+        },
+        {
+          title: "Fornecedores",
+          url: "/providers",
+        },
+      ]
+    }
   ],
+  navSecondary: [
+    {
+      title: "Configurações",
+      url: "/settings",
+      icon: Settings,
+    },
+    {
+      title: "Membros e Times",
+      url: "/settings/team",
+      icon: Users,
+    },
+    {
+      title: "Suporte",
+      url: "/support",
+      icon: LifeBuoy,
+    },
+    {
+      title: "Feedback",
+      url: "/feedback",
+      icon: Send,
+    },
+  ]
 };
-
-const items = [
-  {
-    title: "Dashboard",
-    url: "dashboard",
-    icon: ChartBar,
-  },
-];
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   return (
@@ -86,8 +136,8 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       </SidebarHeader>
 
       <SidebarContent>
-        <NavAdmin items={items}/>
         <NavMain items={data.navMain} />
+        <NavSecondary items={data.navSecondary} className="mt-auto"/>
       </SidebarContent>
 
       <SidebarFooter>
