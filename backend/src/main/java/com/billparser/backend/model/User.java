@@ -27,6 +27,9 @@ public class User implements UserDetails{
     @Column(nullable = false)
     private String fullName;
 
+    @Column(name = "avatar_url")
+    private String avatarUrl;
+
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
             name = "user_roles",
