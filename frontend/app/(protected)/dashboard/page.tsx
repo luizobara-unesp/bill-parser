@@ -8,7 +8,7 @@ export default function DashboardPage() {
   return (
     <PageGuard>
       <div className="w-full p-6 max-w-7xl mx-auto">
-        <div className="flex justify-between items-center mb-6">
+        <div className="flex justify-between items-center mb-6 px-4 lg:px-6">
            <h3 className="font-bold text-2xl uppercase">Histórico de Contas</h3>
         </div>
         <>
