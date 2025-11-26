@@ -1,8 +1,10 @@
 "use client";
 
 import { useEffect } from "react";
+import { Loader2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/context/AuthContext";
+import { DashboardSkeleton } from "@/components/dashboard/dashboard-skeleton";
 
 export function PageGuard({ children }: { children: React.ReactNode }) {
   const { isAuthenticated, isLoading } = useAuth();
@@ -15,11 +17,15 @@ export function PageGuard({ children }: { children: React.ReactNode }) {
   }, [isAuthenticated, isLoading, router]);
 
   if (isLoading) {
-    return <div>Carregando sessão...</div>;
+    return <DashboardSkeleton />;
   }
 
   if (!isAuthenticated) {
-    return <div>Redirecionando...</div>;
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-gray-100">
+      <Loader2 className="h-10 w-10 animate-spin text-zinc-950" />
+    </div>
+    );
   }
 
   return <>{children}</>;
