@@ -44,7 +44,7 @@ export default function BillPage() {
 
   return (
     <PageGuard>
-      <div className="w-full p-6 max-w-7xl mx-auto">
+      <div className="w-full p-6 mx-auto">
         <div className="flex justify-between items-center mb-6">
            <h3 className="font-bold text-2xl uppercase">Contas de Consumo</h3>
         </div>
