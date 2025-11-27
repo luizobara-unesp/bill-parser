@@ -36,8 +36,8 @@ public class BillController {
 
         BillSavedResponse response = BillSavedResponse.builder()
                 .id(savedBill.getId())
-                .valorTotalPagar(BigDecimal.valueOf(savedBill.getValorTotalPagar()))
-                .mesReferenciaGeral(savedBill.getMesReferenciaGeral())
+                .valorTotalPagar(BigDecimal.valueOf(savedBill.getTotalAmount()))
+                .mesReferenciaGeral(savedBill.getReferenceMonth())
                 .savedByUserId(currentUser.getId())
                 .statusMessage("Conta ID " + savedBill.getId() + " salva e aprovada com sucesso.")
                 .build();
@@ -52,10 +52,30 @@ public class BillController {
         return ResponseEntity.ok(extractedData);
     }
 
+    @PutMapping("/{id}")
+    public ResponseEntity<BillSavedResponse> updateBill(
+            @PathVariable Long id,
+            @RequestBody AnalysisCompletaConta billData
+    ) {
+        User currentUser = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+        Bill updatedBill = billService.updateBillFromDTO(id, billData, currentUser);
+
+        BillSavedResponse response = BillSavedResponse.builder()
+                .id(updatedBill.getId())
+                .valorTotalPagar(BigDecimal.valueOf(updatedBill.getTotalAmount()))
+                .mesReferenciaGeral(updatedBill.getReferenceMonth())
+                .savedByUserId(currentUser.getId())
+                .statusMessage("Conta atualizada com sucesso.")
+                .build();
+
+        return ResponseEntity.ok(response);
+    }
+
     @GetMapping
     public ResponseEntity<Page<BillSavedResponse>> getAllBills (
             @RequestParam("workspaceId") Long workspaceId,
-            @PageableDefault(size = 10, sort = "dataVencimento", direction = Sort.Direction.DESC) Pageable pageable
+            @PageableDefault(size = 10, sort = "dueDate", direction = Sort.Direction.DESC) Pageable pageable
     ) {
         User currentUser = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 

@@ -1,23 +1,26 @@
 "use client";
 
-import { saveBill } from "@/services/billService";
-import { useState } from "react";
-
 import { toast } from "sonner";
-import { useEffect } from "react";
 import { useForm } from "react-hook-form";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
+
+import { saveBill } from "@/services/billService";
+
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
-import { AnaliseCompletaConta } from "@/types/bill";
-import { Separator } from "@/components/ui/separator";
-import { useBillReview } from "@/context/BillReviewContext";
-import { ArrowLeft, Save, CheckCircle2 } from "lucide-react";
-import { HistoryForm } from "@/components/bills/history-form";
-import { BilledItemsForm } from "@/components/bills/billed-items-form";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { ArrowLeft, CheckCircle2 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+
+import { AnaliseCompletaConta } from "@/types/bill";
+import { useBillReview } from "@/context/BillReviewContext";
+
+import { TaxesForm } from "@/components/bills/taxes-form";
+import { HistoryForm } from "@/components/bills/history-form";
+import { TechnicalForm } from "@/components/bills/technical-form";
+import { BilledItemsForm } from "@/components/bills/billed-items-form";
 
 export default function BillReviewPage() {
   const [isSaving, setIsSaving] = useState(false);
@@ -37,16 +40,10 @@ export default function BillReviewPage() {
   const onSubmit = async (data: AnaliseCompletaConta) => {
     try {
       setIsSaving(true);
-      const workspaceId = 1; 
-
-      console.log("Enviando para o backend...", data);
-      
+      const workspaceId = 1;
       await saveBill(data, workspaceId);
-
       toast.success("Conta salva com sucesso!");
-      
       router.push("/bills"); 
-
     } catch (error) {
       console.error(error);
       toast.error("Erro ao salvar a conta. Verifique os dados.");
@@ -58,7 +55,7 @@ export default function BillReviewPage() {
   if (!reviewData) return null;
 
   return (
-    <div className="p-6 max-w-6xl mx-auto space-y-6 pb-20">
+    <div className="p-6 w-full mx-auto space-y-6 pb-20">
       <div className="flex items-center justify-between sticky top-0 bg-background/95 backdrop-blur z-10 py-4 border-b">
         <div className="flex items-center gap-4">
           <Button variant="ghost" size="icon" onClick={() => router.back()}>
@@ -66,7 +63,7 @@ export default function BillReviewPage() {
           </Button>
           <div>
             <h1 className="text-2xl font-bold flex items-center gap-2">
-              Revisão da Conta{" "}
+              Revisão da Conta
               <span className="text-muted-foreground text-lg font-normal">
                 | {reviewData.mes_referencia_geral}
               </span>
@@ -92,6 +89,7 @@ export default function BillReviewPage() {
       </div>
 
       <form className="space-y-8">
+        
         <Card>
           <CardHeader>
             <CardTitle>Informações Principais</CardTitle>
@@ -125,10 +123,7 @@ export default function BillReviewPage() {
             </div>
             <div className="space-y-2">
               <Label>Consumo Fora Ponta (kWh)</Label>
-              <Input
-                type="number"
-                {...form.register("consumo_fora_ponta_kwh")}
-              />
+              <Input type="number" {...form.register("consumo_fora_ponta_kwh")} />
             </div>
             <div className="space-y-2">
               <Label>Dias Faturamento</Label>
@@ -154,36 +149,11 @@ export default function BillReviewPage() {
           </TabsContent>
 
           <TabsContent value="taxes" className="mt-6">
-            <Card>
-              <CardHeader>
-                <CardTitle>Detalhamento de Impostos</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="text-muted-foreground text-sm">
-                  Em breve: Edição de PIS/COFINS/ICMS.
-                </p>
-              </CardContent>
-            </Card>
+            <TaxesForm control={form.control} register={form.register} />
           </TabsContent>
 
           <TabsContent value="tech" className="mt-6">
-            <Card>
-              <CardHeader>
-                <CardTitle>Dados Técnicos e Medidores</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="space-y-2">
-                    <Label>Demanda Contratada (kW)</Label>
-                    <Input {...form.register("demanda_contratada.valor_kw")} />
-                  </div>
-                  <div className="space-y-2">
-                    <Label>Tipo de Demanda</Label>
-                    <Input {...form.register("demanda_contratada.tipo")} />
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
+            <TechnicalForm control={form.control} register={form.register} />
           </TabsContent>
         </Tabs>
       </form>

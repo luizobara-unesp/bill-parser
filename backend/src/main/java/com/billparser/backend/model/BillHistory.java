@@ -4,23 +4,28 @@ import jakarta.persistence.*;
 import lombok.Data;
 
 @Entity
-@Table(name = "bill_items")
+@Table(name = "bill_history")
 @Data
-public class BillItem {
+public class BillHistory {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
-    private String description;
 
     @Column(name = "reference_month")
     private String referenceMonth;
 
-    private Double quantity;
+    @Enumerated(EnumType.STRING)
+    private HistoryType type;
 
-    @Column(name = "total_value")
-    private Double totalValue;
+    private Double value;
+    private Integer days;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "bill_id", nullable = false)
     private Bill bill;
+
+    public enum HistoryType {
+        PEAK_CONSUMPTION,
+        OFF_PEAK_CONSUMPTION,
+        DEMAND
+    }
 }

@@ -4,21 +4,22 @@ import jakarta.persistence.*;
 import lombok.Data;
 
 @Entity
-@Table(name = "bill_items")
+@Table(name = "bill_meter_readings")
 @Data
-public class BillItem {
+public class BillMeterReading {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     private String description;
 
-    @Column(name = "reference_month")
-    private String referenceMonth;
+    @Column(name = "current_reading")
+    private Double currentReading;
 
-    private Double quantity;
+    @Column(name = "previous_reading")
+    private Double previousReading;
 
-    @Column(name = "total_value")
-    private Double totalValue;
+    @Column(name = "multiplication_factor")
+    private Double multiplicationFactor;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "bill_id", nullable = false)
