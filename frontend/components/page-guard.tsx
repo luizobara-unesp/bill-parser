@@ -22,9 +22,9 @@ export function PageGuard({ children }: { children: React.ReactNode }) {
 
   if (!isAuthenticated) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-gray-100">
-      <Loader2 className="h-10 w-10 animate-spin text-zinc-950" />
-    </div>
+      <div className="flex w-full min-h-screen items-center justify-center">
+        <Loader2 className="h-10 w-10 animate-spin text-zinc-950" />
+      </div>
     );
   }
 
