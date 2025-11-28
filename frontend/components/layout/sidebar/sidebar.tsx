@@ -1,27 +1,27 @@
 "use client";
 
 import * as React from "react";
+
 import {
   LayoutDashboard,
   Receipt,
   FileBarChart,
   Settings,
   Building2,
-  AlertCircle,
   GalleryVerticalEnd,
   AudioWaveform,
-  Command,
   UploadCloud,
   ListFilter,
   Users,
   LifeBuoy,
-  Send
+  Send,
+  Home,
 } from "lucide-react";
 
 import { NavMain } from "./nav-main";
 import { NavUser } from "./nav-user";
 import { TeamSwitcher } from "./team-switcher";
-import { NavSecondary } from "./nav-secondary"; 
+import { NavSecondary } from "./nav-secondary";
 
 import {
   Sidebar,
@@ -46,10 +46,14 @@ const data = {
   ],
   navMain: [
     {
+      title: "Home",
+      url: "/home",
+      icon: Home
+    },
+    {
       title: "Dashboard",
       url: "/dashboard",
-      icon: LayoutDashboard,
-      isActive: true,
+      icon: LayoutDashboard
     },
     {
       title: "Contas e Faturas",
@@ -63,7 +67,7 @@ const data = {
         },
         {
           title: "Novo Upload",
-          url: "/bills/upload", 
+          url: "/bills/upload",
           icon: UploadCloud
         },
       ],
@@ -125,14 +129,17 @@ const data = {
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   return (
-    <Sidebar collapsible="icon" {...props}>
+    <Sidebar
+      className="top-(--header-height) h-[calc(100svh-var(--header-height))]!"
+      {...props}
+    >
       <SidebarHeader>
         <TeamSwitcher teams={data.teams} />
       </SidebarHeader>
 
       <SidebarContent>
         <NavMain items={data.navMain} />
-        <NavSecondary items={data.navSecondary} className="mt-auto"/>
+        <NavSecondary items={data.navSecondary} className="mt-auto" />
       </SidebarContent>
 
       <SidebarFooter>
