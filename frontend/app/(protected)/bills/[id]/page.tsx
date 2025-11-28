@@ -48,9 +48,29 @@ export default function BillDetailsPage() {
   const onSubmit = async (data: AnaliseCompletaConta) => {
     try {
       setIsSaving(true);
-      await updateBill(billId, data);
+      
+      if (data.demonstrativo_utilizacao) {
+        data.demonstrativo_utilizacao.consumo_ponta = data.demonstrativo_utilizacao.consumo_ponta.filter(
+          (item) => item.mes_referencia && item.mes_referencia.trim() !== ""
+        );
+
+        data.demonstrativo_utilizacao.consumo_fora_ponta = data.demonstrativo_utilizacao.consumo_fora_ponta.filter(
+          (item) => item.mes_referencia && item.mes_referencia.trim() !== ""
+        );
+
+        data.demonstrativo_utilizacao.demanda = data.demonstrativo_utilizacao.demanda.filter(
+          (item) => item.mes_referencia && item.mes_referencia.trim() !== ""
+        );
+      }
+      
+      if (data.itens_faturados) {
+        data.itens_faturados = data.itens_faturados.filter(i => i.descricao && i.descricao.trim() !== "");
+      }
+      await updateBill(billId, data); 
+      
       toast.success("Conta atualizada com sucesso!");
     } catch (error) {
+      console.error(error);
       toast.error("Erro ao atualizar conta.");
     } finally {
       setIsSaving(false);
