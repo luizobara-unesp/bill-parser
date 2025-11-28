@@ -1,19 +1,17 @@
-"use client";
+import { cookies } from "next/headers";
+import { ProtectedShell } from "@/components/layout/protected-shell";
 
-import { ReactNode } from "react";
-import { AppSidebar } from "@/components/layout/sidebar/sidebar";
-import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
+export default async function ProtectedLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
+  const cookieStore = await cookies();
+  const defaultOpen = cookieStore.get("sidebar_state")?.value === "true";
 
-export default function DashboardLayout({ children }: { children: ReactNode }) {
   return (
-    <SidebarProvider>
-      <AppSidebar/>
-      <main className="w-full p-4">
-        <SidebarTrigger/>
-        <div className="flex">
-          {children}
-        </div>
-      </main>
-    </SidebarProvider>
+    <ProtectedShell defaultOpen={defaultOpen}>
+      {children}
+    </ProtectedShell>
   );
 }
