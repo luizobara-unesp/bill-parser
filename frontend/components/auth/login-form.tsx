@@ -57,7 +57,7 @@ export function LoginForm() {
     try {
       const { token, email } = await loginUser(values);
       login(token, email);
-      router.push("/dashboard");
+      router.push("/home");
     } catch (err) {
       setError("Falha no login. Verifique seu email e senha.");
       console.error(err);

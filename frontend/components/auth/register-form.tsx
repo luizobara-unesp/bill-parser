@@ -61,7 +61,7 @@ export function RegisterForm() {
     try {
       const { token, email } = await registerUser(values);
       login(token, email);
-      router.push("/dashboard");
+      router.push("/home");
     } catch (err) {
       setError("Falha no registro. Este email pode já estar em uso.");
       console.error(err);
