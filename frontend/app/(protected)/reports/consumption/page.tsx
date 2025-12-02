@@ -39,7 +39,7 @@ export default function ReportsPage() {
 
   return (
     <PageGuard>
-      <div className="p-6 max-w-7xl mx-auto space-y-8">
+      <div className="p-6 w-full space-y-8">
         <div className="flex items-center justify-between">
           <div>
             <h2 className="text-3xl font-bold tracking-tight">
