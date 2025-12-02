@@ -73,7 +73,7 @@ export default function HistoryReportPage() {
 
   return (
     <PageGuard>
-      <div className="p-6 max-w-7xl mx-auto space-y-8 pb-20">
+      <div className="p-6 w-full space-y-8 pb-20">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div>
             <h2 className="text-3xl font-bold tracking-tight">
