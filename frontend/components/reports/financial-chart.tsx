@@ -1,6 +1,7 @@
 "use client";
 
 import { Bar, BarChart, CartesianGrid, XAxis, YAxis } from "recharts";
+
 import {
   Card,
   CardContent,
@@ -8,12 +9,14 @@ import {
   CardTitle,
   CardDescription,
 } from "@/components/ui/card";
+
 import {
   ChartConfig,
   ChartContainer,
   ChartTooltip,
   ChartTooltipContent,
 } from "@/components/ui/chart";
+
 import { ConsumptionReport } from "@/types/report";
 
 const chartConfig = {
@@ -24,6 +27,25 @@ const chartConfig = {
 } satisfies ChartConfig;
 
 export function FinancialChart({ data }: { data: ConsumptionReport[] }) {
+  const isEmpty = !data || !Array.isArray(data) || data.length === 0;
+
+  if (isEmpty) {
+    return (
+      <Card>
+        <CardHeader>
+          <CardTitle>Histórico de Utilização (12 Meses)</CardTitle>
+          <CardDescription>
+            Comparativo de Consumo (Barras) vs Demanda Medida (Linha)
+          </CardDescription>
+        </CardHeader>
+
+        <CardContent className="flex h-[300px] items-center justify-center text-muted-foreground">
+          Não há dados para serem visualizados.
+        </CardContent>
+      </Card>
+    );
+  }
+
   return (
     <Card>
       <CardHeader>

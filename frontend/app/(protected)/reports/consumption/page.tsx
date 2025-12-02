@@ -1,22 +1,28 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { PageGuard } from "@/components/page-guard";
 import { ConsumptionChart } from "@/components/reports/consumption-chart";
 import { FinancialChart } from "@/components/reports/financial-chart";
 import { getConsumptionReport } from "@/services/reportService";
-import { ConsumptionReport } from "@/types/report";
+import { useWorkspace } from "@/context/WorkspaceContext";
 import { Loader2, CalendarRange } from "lucide-react";
+import { PageGuard } from "@/components/page-guard";
+import { ConsumptionReport } from "@/types/report";
+import { useEffect, useState } from "react";
 import { toast } from "sonner";
 
 export default function ReportsPage() {
   const [data, setData] = useState<ConsumptionReport[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  
+  const { activeWorkspace } = useWorkspace();
 
   useEffect(() => {
     async function loadData() {
       try {
-        const workspaceId = 1; // TODO: Pegar dinâmico
+        if (!activeWorkspace) return;
+
+        const workspaceId = activeWorkspace.id;
+        
         const reportData = await getConsumptionReport(workspaceId);
         setData(reportData);
       } catch (error) {
@@ -57,7 +63,7 @@ export default function ReportsPage() {
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           <ConsumptionChart data={data} />
-
+          
           <FinancialChart data={data} />
         </div>
       </div>

@@ -22,6 +22,8 @@ import { SpecificHistory } from "@/types/report";
 import { BillHistoryChart } from "@/components/reports/history-chart";
 import { BillDetailedHistory } from "@/components/reports/detailed-history";
 
+import { useWorkspace } from "@/context/WorkspaceContext";
+
 export default function HistoryReportPage() {
   const [bills, setBills] = useState<BillSavedResponse[]>([]);
   const [selectedBillId, setSelectedBillId] = useState<string>("");
@@ -30,10 +32,14 @@ export default function HistoryReportPage() {
   const [isLoadingBills, setIsLoadingBills] = useState(true);
   const [isLoadingChart, setIsLoadingChart] = useState(false);
 
+  
+  const { activeWorkspace } = useWorkspace();
+
   useEffect(() => {
     async function loadBills() {
       try {
-        const data = await getBills({ workspaceId: 1, page: 0, size: 20 });
+        if (!activeWorkspace) return;
+        const data = await getBills({ workspaceId: activeWorkspace.id, page: 0, size: 20 });
         setBills(data.content);
 
         if (data.content.length > 0) {

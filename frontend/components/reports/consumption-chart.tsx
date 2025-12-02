@@ -36,6 +36,25 @@ const chartConfig = {
 } satisfies ChartConfig;
 
 export function ConsumptionChart({ data }: { data: ConsumptionReport[] }) {
+  const isEmpty = !data || !Array.isArray(data) || data.length === 0;
+
+  if (isEmpty) {
+    return (
+      <Card>
+        <CardHeader>
+          <CardTitle>Histórico de Consumo (kWh)</CardTitle>
+          <CardDescription>
+            Acompanhamento mensal de energia ativa
+          </CardDescription>
+        </CardHeader>
+
+        <CardContent className="flex h-[300px] items-center justify-center text-muted-foreground">
+          Não há dados para serem visualizados.
+        </CardContent>
+      </Card>
+    );
+  }
+
   return (
     <Card>
       <CardHeader>

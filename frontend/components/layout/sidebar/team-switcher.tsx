@@ -1,4 +1,7 @@
-"use client"
+"use client";
+
+import * as React from "react";
+import { ChevronsUpDown, Plus, Building2 } from "lucide-react";
 
 import {
   SidebarMenu,
@@ -17,23 +20,28 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 
-import * as React from "react";
-import { ChevronsUpDown, Plus } from "lucide-react";
+import { useWorkspace } from "@/context/WorkspaceContext";
+import { CreateWorkspaceDialog } from "@/components/workspaces/create-workspace-dialog";
 
-export function TeamSwitcher({
-  teams,
-}: {
-  teams: {
-    name: string
-    logo: React.ElementType
-    plan: string
-  }[]
-}) {
-  const { isMobile } = useSidebar()
-  const [activeTeam, setActiveTeam] = React.useState(teams[0])
+export function TeamSwitcher() {
+  const { isMobile } = useSidebar();
+  
+  const { 
+      workspaces, 
+      activeWorkspace, 
+      setActiveWorkspace, 
+      refreshWorkspaces,
+      isLoading 
+  } = useWorkspace();
 
-  if (!activeTeam) {
-    return null
+  if (isLoading) {
+      return (
+        <SidebarMenu>
+            <SidebarMenuItem>
+                <div className="h-12 w-full animate-pulse bg-sidebar-accent/50 rounded-lg" />
+            </SidebarMenuItem>
+        </SidebarMenu>
+      )
   }
 
   return (
@@ -45,48 +53,60 @@ export function TeamSwitcher({
               size="lg"
               className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
             >
-              <div className="bg-sidebar-primary text-sidebar-primary-foreground flex aspect-square size-8 items-center justify-center rounded-lg">
-                <activeTeam.logo className="size-4" />
+              <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-sidebar-primary text-sidebar-primary-foreground">
+                <Building2 className="size-4" />
               </div>
               <div className="grid flex-1 text-left text-sm leading-tight">
-                <span className="truncate font-medium">{activeTeam.name}</span>
-                <span className="truncate text-xs">{activeTeam.plan}</span>
+                <span className="truncate font-medium">
+                  {activeWorkspace?.name || "Selecione um Espaço"}
+                </span>
+                <span className="truncate text-xs">Free Plan</span>
               </div>
               <ChevronsUpDown className="ml-auto" />
             </SidebarMenuButton>
           </DropdownMenuTrigger>
+          
           <DropdownMenuContent
-            className="w-(--radix-dropdown-menu-trigger-width) min-w-56 rounded-lg"
+            className="w-[--radix-dropdown-menu-trigger-width] min-w-56 rounded-lg"
             align="start"
             side={isMobile ? "bottom" : "right"}
             sideOffset={4}
           >
-            <DropdownMenuLabel className="text-muted-foreground text-xs">
-              Teams
+            <DropdownMenuLabel className="text-xs text-muted-foreground">
+              Workspaces
             </DropdownMenuLabel>
-            {teams.map((team, index) => (
+            
+            {workspaces.map((workspace, index) => (
               <DropdownMenuItem
-                key={team.name}
-                onClick={() => setActiveTeam(team)}
+                key={workspace.id}
+                onClick={() => setActiveWorkspace(workspace)}
                 className="gap-2 p-2"
               >
-                <div className="flex size-6 items-center justify-center rounded-md border">
-                  <team.logo className="size-3.5 shrink-0" />
+                <div className="flex size-6 items-center justify-center rounded-sm border">
+                  <Building2 className="size-4 shrink-0" />
                 </div>
-                {team.name}
+                {workspace.name}
                 <DropdownMenuShortcut>⌘{index + 1}</DropdownMenuShortcut>
               </DropdownMenuItem>
             ))}
+            
             <DropdownMenuSeparator />
-            <DropdownMenuItem className="gap-2 p-2">
-              <div className="flex size-6 items-center justify-center rounded-md border bg-transparent">
-                <Plus className="size-4" />
-              </div>
-              <div className="text-muted-foreground font-medium">Adicionar Workspace</div>
-            </DropdownMenuItem>
+            
+            <CreateWorkspaceDialog onSuccess={refreshWorkspaces}>
+                <DropdownMenuItem 
+                    className="gap-2 p-2 cursor-pointer"
+                    onSelect={(e) => e.preventDefault()}
+                >
+                    <div className="flex size-6 items-center justify-center rounded-md border bg-background">
+                        <Plus className="size-4" />
+                    </div>
+                    <div className="font-medium text-muted-foreground">Novo Workspace</div>
+                </DropdownMenuItem>
+            </CreateWorkspaceDialog>
+
           </DropdownMenuContent>
         </DropdownMenu>
       </SidebarMenuItem>
     </SidebarMenu>
-  )
+  );
 }

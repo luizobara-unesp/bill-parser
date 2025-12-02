@@ -32,18 +32,6 @@ import {
 } from "@/components/ui/sidebar";
 
 const data = {
-  teams: [
-    {
-      name: "Minha Empresa",
-      logo: GalleryVerticalEnd,
-      plan: "Enterprise",
-    },
-    {
-      name: "Projeto Pessoal",
-      logo: AudioWaveform,
-      plan: "Free",
-    },
-  ],
   navMain: [
     {
       title: "Home",
@@ -134,7 +122,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       {...props}
     >
       <SidebarHeader>
-        <TeamSwitcher teams={data.teams} />
+        <TeamSwitcher />
       </SidebarHeader>
 
       <SidebarContent>
