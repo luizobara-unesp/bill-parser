@@ -1,8 +1,9 @@
 package com.billparser.backend.controller;
 
+import com.billparser.backend.dto.workspace.WorkspaceRequest;
+import com.billparser.backend.dto.workspace.WorkspaceResponse;
 import com.billparser.backend.model.User;
-import com.billparser.backend.model.Workspace;
-import com.billparser.backend.repository.WorkspaceRepository;
+import com.billparser.backend.service.WorkspaceService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -15,21 +16,23 @@ import java.util.List;
 @RequiredArgsConstructor
 public class WorkspaceController {
 
-    private final WorkspaceRepository workspaceRepository;
+    private final WorkspaceService workspaceService;
 
     @PostMapping
-    public ResponseEntity<Workspace> createWorkspace(@RequestBody Workspace newWorkspace) {
+    public ResponseEntity<WorkspaceResponse> createWorkspace(@RequestBody WorkspaceRequest request) {
         User currentUser = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
-        newWorkspace.setUser(currentUser);
-        Workspace savedWorkspace = workspaceRepository.save(newWorkspace);
-        return ResponseEntity.ok(savedWorkspace);
+        WorkspaceResponse response = workspaceService.createWorkspace(request, currentUser);
+
+        return ResponseEntity.ok(response);
     }
 
     @GetMapping
-    public ResponseEntity<List<Workspace>> getMyWorkspaces() {
+    public ResponseEntity<List<WorkspaceResponse>> getMyWorkspaces() {
         User currentUser = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        List<Workspace> workspaces = workspaceRepository.findByUserId(currentUser.getId());
+
+        List<WorkspaceResponse> workspaces = workspaceService.getWorkspacesByUser(currentUser);
+
         return ResponseEntity.ok(workspaces);
     }
 }

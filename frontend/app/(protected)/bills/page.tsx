@@ -6,6 +6,7 @@ import { BillSavedResponse } from "@/types/bill";
 import { getBills } from "@/services/billService";
 import { PageGuard } from "@/components/page-guard";
 import { BillCard } from "@/components/bills/bill-card";
+import { useWorkspace } from "@/context/WorkspaceContext";
 import { BillPagination } from "@/components/bills/bill-pagination";
 
 export default function BillPage() {
@@ -16,13 +17,15 @@ export default function BillPage() {
   const [totalPages, setTotalPages] = useState(0);
   const pageSize = 8; 
 
+  const { activeWorkspace } = useWorkspace();
+
   const fetchBills = async (page: number) => {
     try {
       setIsLoading(true);
-      const workspaceId = 1; 
+      if (!activeWorkspace) return;
       
       const data = await getBills({ 
-        workspaceId, 
+        workspaceId: activeWorkspace.id, 
         page: page, 
         size: pageSize 
       });

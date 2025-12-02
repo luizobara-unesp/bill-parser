@@ -17,6 +17,8 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { AnaliseCompletaConta } from "@/types/bill";
 import { useBillReview } from "@/context/BillReviewContext";
 
+import { useWorkspace } from "@/context/WorkspaceContext";
+
 import { TaxesForm } from "@/components/bills/taxes-form";
 import { HistoryForm } from "@/components/bills/history-form";
 import { TechnicalForm } from "@/components/bills/technical-form";
@@ -26,6 +28,8 @@ export default function BillReviewPage() {
   const [isSaving, setIsSaving] = useState(false);
   const { reviewData } = useBillReview();
   const router = useRouter();
+
+  const { activeWorkspace } = useWorkspace();
 
   useEffect(() => {
     if (!reviewData) {
@@ -40,10 +44,13 @@ export default function BillReviewPage() {
   const onSubmit = async (data: AnaliseCompletaConta) => {
     try {
       setIsSaving(true);
-      const workspaceId = 1;
+      if (!activeWorkspace) return;
+
+      const workspaceId = activeWorkspace?.id;
+      
       await saveBill(data, workspaceId);
       toast.success("Conta salva com sucesso!");
-      router.push("/bills"); 
+      router.push("/bills");
     } catch (error) {
       console.error(error);
       toast.error("Erro ao salvar a conta. Verifique os dados.");
@@ -80,16 +87,17 @@ export default function BillReviewPage() {
             disabled={isSaving}
           >
             {isSaving ? (
-               <>Salvando...</> 
+              <>Salvando...</>
             ) : (
-               <><CheckCircle2 className="w-4 h-4 mr-2" /> Aprovar e Salvar</>
+              <>
+                <CheckCircle2 className="w-4 h-4 mr-2" /> Aprovar e Salvar
+              </>
             )}
           </Button>
         </div>
       </div>
 
       <form className="space-y-8">
-        
         <Card>
           <CardHeader>
             <CardTitle>Informações Principais</CardTitle>
@@ -123,7 +131,10 @@ export default function BillReviewPage() {
             </div>
             <div className="space-y-2">
               <Label>Consumo Fora Ponta (kWh)</Label>
-              <Input type="number" {...form.register("consumo_fora_ponta_kwh")} />
+              <Input
+                type="number"
+                {...form.register("consumo_fora_ponta_kwh")}
+              />
             </div>
             <div className="space-y-2">
               <Label>Dias Faturamento</Label>
