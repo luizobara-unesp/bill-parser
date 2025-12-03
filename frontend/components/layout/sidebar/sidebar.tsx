@@ -4,17 +4,12 @@ import * as React from "react";
 
 import {
   LayoutDashboard,
-  Receipt,
   FileBarChart,
-  Settings,
-  Building2,
-  GalleryVerticalEnd,
-  AudioWaveform,
   UploadCloud,
   ListFilter,
-  Users,
+  Settings,
   LifeBuoy,
-  Send,
+  Receipt,
   Home,
 } from "lucide-react";
 
@@ -74,21 +69,6 @@ const data = {
           url: "/reports/history",
         },
       ],
-    },
-    {
-      title: "Cadastros",
-      url: "/register",
-      icon: Building2,
-      items: [
-        {
-          title: "Unidades / Locais",
-          url: "/units",
-        },
-        {
-          title: "Fornecedores",
-          url: "/providers",
-        },
-      ]
     }
   ],
   navSecondary: [
@@ -98,19 +78,9 @@ const data = {
       icon: Settings,
     },
     {
-      title: "Membros e Times",
-      url: "/settings/team",
-      icon: Users,
-    },
-    {
       title: "Suporte",
       url: "/support",
       icon: LifeBuoy,
-    },
-    {
-      title: "Feedback",
-      url: "/feedback",
-      icon: Send,
     },
   ]
 };
