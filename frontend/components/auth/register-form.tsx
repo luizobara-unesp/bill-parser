@@ -22,11 +22,11 @@ import {
 import { Input } from "@/components/ui/input";
 import {
   Card,
+  CardTitle,
+  CardHeader,
+  CardFooter,
   CardContent,
   CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
 } from "@/components/ui/card";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 
@@ -71,10 +71,16 @@ export function RegisterForm() {
   };
 
   return (
-    <Card className="w-full max-w-md h-96">
-      <CardHeader className="text-center text-xl">
-        <CardTitle>Criar sua conta</CardTitle>
+    <Card className="w-full max-w-xs md:max-w-md h-96 bg-white border border-zinc-200 text-zinc-900 shadow-sm gap-0">
+      <CardHeader className="text-center gap-0">
+        <CardTitle className="text-2xl font-semibold">
+          Criar sua conta
+        </CardTitle>
+        <CardDescription className="text-xs text-zinc-600">
+          Comece a usar o Bill Parser em poucos segundos.
+        </CardDescription>
       </CardHeader>
+
       <CardContent className="h-full">
         <Form {...form}>
           <form
@@ -86,77 +92,74 @@ export function RegisterForm() {
               name="fullName"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Nome Completo</FormLabel>
+                  <FormLabel className="text-sm text-zinc-800">
+                    Nome Completo
+                  </FormLabel>
                   <FormControl>
                     <Input
-                      placeholder="Seu nome completo"
                       {...field}
                       type="text"
                       autoComplete="name"
+                      placeholder="Seu nome completo"
+                      className="bg-white border-zinc-200 text-zinc-900 placeholder:text-zinc-400 focus-visible:ring-zinc-800"
                     />
                   </FormControl>
-                  <FormMessage />
+                  <FormMessage className="text-xs" />
                 </FormItem>
               )}
             />
+
             <FormField
               control={form.control}
               name="email"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Email</FormLabel>
+                  <FormLabel className="text-sm text-zinc-800">Email</FormLabel>
                   <FormControl>
                     <Input
-                      placeholder="seu@email.com"
                       {...field}
                       type="email"
                       autoComplete="email"
+                      placeholder="seu@email.com"
+                      className="bg-white border-zinc-200 text-zinc-900 placeholder:text-zinc-400 focus-visible:ring-zinc-800"
                     />
                   </FormControl>
-                  <FormMessage />
+                  <FormMessage className="text-xs" />
                 </FormItem>
               )}
             />
+
             <FormField
               control={form.control}
               name="password"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Senha</FormLabel>
+                  <FormLabel className="text-sm text-zinc-800">Senha</FormLabel>
                   <FormControl>
                     <Input
-                      placeholder="Crie uma senha"
                       {...field}
                       type="password"
                       autoComplete="new-password"
+                      placeholder="Crie uma senha"
+                      className="bg-white border-zinc-200 text-zinc-900 placeholder:text-zinc-400 focus-visible:ring-zinc-800"
                     />
                   </FormControl>
-                  <FormMessage />
+                  <FormMessage className="text-xs" />
                 </FormItem>
               )}
             />
 
             {error && (
-              <Alert variant="destructive">
+              <Alert className="border-red-500/60 bg-red-500/5 text-red-600">
                 <AlertDescription>{error}</AlertDescription>
               </Alert>
             )}
 
-            <div className="mt-auto space-y-2">
-              <CardDescription className="text-center">
-                Já tem uma conta?{" "}
-                <Link
-                  href="/login"
-                  className="font-medium text-blue-600 hover:text-blue-500"
-                >
-                  Entre aqui
-                </Link>
-              </CardDescription>
-
+            <div className="mt-auto mb-1">
               <Button
                 type="submit"
-                className="w-full mt-auto"
                 disabled={isLoading}
+                className="w-full bg-blue-600 text-white hover:bg-blue-500 font-medium"
               >
                 {isLoading ? "Criando conta..." : "Registrar"}
               </Button>
@@ -164,6 +167,17 @@ export function RegisterForm() {
           </form>
         </Form>
       </CardContent>
+      <CardFooter>
+        <p className="text-center text-xs text-zinc-600">
+          Já tem uma conta?{" "}
+          <Link
+            href="/login"
+            className="text-blue-600 hover:text-blue-500 font-medium"
+          >
+            Entre aqui
+          </Link>
+        </p>
+      </CardFooter>
     </Card>
   );
 }

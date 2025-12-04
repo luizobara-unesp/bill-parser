@@ -22,11 +22,11 @@ import {
 import { Input } from "@/components/ui/input";
 import {
   Card,
+  CardTitle,
+  CardHeader,
+  CardFooter,
   CardContent,
   CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
 } from "@/components/ui/card";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 
@@ -67,79 +67,98 @@ export function LoginForm() {
   };
 
   return (
-    <Card className="w-full max-w-md h-96">
-      <CardHeader className="text-center text-xl">
-        <CardTitle>Entrar na sua conta</CardTitle>
+    <Card className="w-full max-w-xs md:max-w-md h-96 bg-white border gap-0 border-zinc-200 text-zinc-900 shadow-sm">
+      <CardHeader className="text-center gap-0">
+        <CardTitle className="text-2xl font-semibold">
+          Entrar na sua conta
+        </CardTitle>
+        <CardDescription className="text-xs text-zinc-600">
+          Acesse o Bill Parser com seu email e senha.
+        </CardDescription>
       </CardHeader>
+
       <CardContent className="h-full">
         <Form {...form}>
           <form
             onSubmit={form.handleSubmit(onSubmit)}
-            className="space-y-4 flex flex-col h-full"
+            className="flex flex-col h-full space-y-4"
           >
-            <div className="h-full flex flex-col justify-center space-y-4">
+            <div className="flex flex-col gap-3">
               <FormField
                 control={form.control}
                 name="email"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Email</FormLabel>
+                    <FormLabel className="text-sm text-zinc-800">
+                      Email
+                    </FormLabel>
                     <FormControl>
                       <Input
-                        placeholder="seu@email.com"
                         {...field}
                         type="email"
                         autoComplete="email"
+                        placeholder="seu@email.com"
+                        className="bg-white border-zinc-200 text-zinc-900 placeholder:text-zinc-400 focus-visible:ring-zinc-800"
                       />
                     </FormControl>
-                    <FormMessage />
+                    <FormMessage className="text-xs" />
                   </FormItem>
                 )}
               />
+
               <FormField
                 control={form.control}
                 name="password"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Senha</FormLabel>
+                    <FormLabel className="text-sm text-zinc-800">
+                      Senha
+                    </FormLabel>
                     <FormControl>
                       <Input
-                        placeholder="Sua senha"
                         {...field}
                         type="password"
                         autoComplete="current-password"
+                        placeholder="Sua senha"
+                        className="bg-white border-zinc-200 text-zinc-900 placeholder:text-zinc-400 focus-visible:ring-zinc-800"
                       />
                     </FormControl>
-                    <FormMessage />
+                    <FormMessage className="text-xs" />
                   </FormItem>
                 )}
               />
             </div>
 
             {error && (
-              <Alert variant="destructive">
+              <Alert className="border-red-500/60 bg-red-500/5 text-red-600">
                 <AlertDescription>{error}</AlertDescription>
               </Alert>
             )}
 
-            <div className="mt-auto space-y-2">
-              <CardDescription className="text-center">
-                Não tem uma conta?{" "}
-                <Link
-                  href="/register"
-                  className="font-medium text-blue-600 hover:text-blue-500"
-                >
-                  Registre-se
-                </Link>
-              </CardDescription>
-
-              <Button type="submit" className="w-full" disabled={isLoading}>
+            <div className="mt-auto mb-1">
+              <Button
+                type="submit"
+                disabled={isLoading}
+                className="w-full bg-blue-600 text-white hover:bg-blue-500 font-medium"
+              >
                 {isLoading ? "Carregando..." : "Entrar"}
               </Button>
             </div>
           </form>
         </Form>
       </CardContent>
+
+      <CardFooter>
+        <p className="text-center text-xs text-zinc-600">
+          Não tem uma conta?{" "}
+          <Link
+            href="/register"
+            className="text-blue-600 hover:text-blue-500 font-medium"
+          >
+            Registre-se
+          </Link>
+        </p>
+      </CardFooter>
     </Card>
   );
 }
