@@ -69,6 +69,28 @@ public class BillService {
         return billRepository.save(bill);
     }
 
+    @Transactional
+    public BillSavedResponse deleteBill(Long billId, User user) {
+        Bill bill = billRepository.findById(billId)
+                .orElseThrow(() -> new RuntimeException("Conta não encontrada"));
+
+        if (!bill.getWorkspace().getUser().getId().equals(user.getId())) {
+            throw new SecurityException("Acesso negado.");
+        }
+
+        AnalysisCompletaConta billDetails = getBillById(billId, user);
+
+        billRepository.delete(bill);
+
+        return BillSavedResponse.builder()
+                .id(billId)
+                .valorTotalPagar(BigDecimal.valueOf(bill.getTotalAmount()))
+                .mesReferenciaGeral(bill.getReferenceMonth())
+                .savedByUserId(user.getId())
+                .statusMessage("Conta ID " + billId + " deletada com sucesso.")
+                .build();
+    }
+
     private void mapDtoToEntity(Bill bill, AnalysisCompletaConta analysis) {
         bill.setTotalAmount(analysis.getValor_total_pagar());
 

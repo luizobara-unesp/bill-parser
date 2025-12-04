@@ -91,4 +91,11 @@ public class BillController {
         return ResponseEntity.ok(billDetails);
     }
 
+    @DeleteMapping("/{id}")
+    public ResponseEntity<BillSavedResponse> deleteBill(@PathVariable Long id) {
+        User currentUser = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        BillSavedResponse response = billService.deleteBill(id, currentUser);
+        return ResponseEntity.ok(response);
+    }
+
 }

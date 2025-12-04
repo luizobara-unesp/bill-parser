@@ -47,5 +47,9 @@ export const getBillById = async (id: number): Promise<AnaliseCompletaConta> => 
 };
 
 export const updateBill = async (id: number, data: AnaliseCompletaConta): Promise<void> => {
-    await api.put(`/v1/bills/${id}`, data); 
+  await api.put(`/v1/bills/${id}`, data); 
 };
+
+export const deleteBill = async (id: number): Promise<void> => {
+  await api.delete(`/v1/bills/${id}`);
+}
