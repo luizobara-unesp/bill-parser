@@ -67,12 +67,12 @@ export function LoginForm() {
   };
 
   return (
-    <Card className="w-full max-w-xs md:max-w-md h-96 bg-white border gap-0 border-zinc-200 text-zinc-900 shadow-sm">
-      <CardHeader className="text-center gap-0">
-        <CardTitle className="text-2xl font-semibold">
+    <Card className="w-full max-w-xs md:max-w-md h-96 bg-white/90 border border-zinc-200/80 text-zinc-900 shadow-lg shadow-zinc-900/5 backdrop-blur-sm gap-0">
+      <CardHeader className="text-center gap-1 pb-3">
+        <CardTitle className="text-2xl font-semibold tracking-tight text-zinc-900">
           Entrar na sua conta
         </CardTitle>
-        <CardDescription className="text-xs text-zinc-600">
+        <CardDescription className="text-xs text-zinc-500">
           Acesse o Bill Parser com seu email e senha.
         </CardDescription>
       </CardHeader>
@@ -89,7 +89,7 @@ export function LoginForm() {
                 name="email"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="text-sm text-zinc-800">
+                    <FormLabel className="text-xs font-medium text-zinc-700 uppercase tracking-wide">
                       Email
                     </FormLabel>
                     <FormControl>
@@ -98,7 +98,7 @@ export function LoginForm() {
                         type="email"
                         autoComplete="email"
                         placeholder="seu@email.com"
-                        className="bg-white border-zinc-200 text-zinc-900 placeholder:text-zinc-400 focus-visible:ring-zinc-800"
+                        className="bg-white border-zinc-200 text-zinc-900 placeholder:text-zinc-400 focus-visible:ring-1 focus-visible:ring-zinc-900 focus-visible:border-zinc-900/80 transition-colors"
                       />
                     </FormControl>
                     <FormMessage className="text-xs" />
@@ -111,7 +111,7 @@ export function LoginForm() {
                 name="password"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="text-sm text-zinc-800">
+                    <FormLabel className="text-xs font-medium text-zinc-700 uppercase tracking-wide">
                       Senha
                     </FormLabel>
                     <FormControl>
@@ -120,7 +120,7 @@ export function LoginForm() {
                         type="password"
                         autoComplete="current-password"
                         placeholder="Sua senha"
-                        className="bg-white border-zinc-200 text-zinc-900 placeholder:text-zinc-400 focus-visible:ring-zinc-800"
+                        className="bg-white border-zinc-200 text-zinc-900 placeholder:text-zinc-400 focus-visible:ring-1 focus-visible:ring-zinc-900 focus-visible:border-zinc-900/80 transition-colors"
                       />
                     </FormControl>
                     <FormMessage className="text-xs" />
@@ -130,7 +130,7 @@ export function LoginForm() {
             </div>
 
             {error && (
-              <Alert className="border-red-500/60 bg-red-500/5 text-red-600">
+              <Alert className="border-red-500/60 bg-red-50 text-red-600 text-xs">
                 <AlertDescription>{error}</AlertDescription>
               </Alert>
             )}
@@ -139,7 +139,7 @@ export function LoginForm() {
               <Button
                 type="submit"
                 disabled={isLoading}
-                className="w-full bg-blue-600 text-white hover:bg-blue-500 font-medium"
+                className="w-full bg-zinc-900 text-white hover:bg-zinc-800 disabled:opacity-60 disabled:cursor-not-allowed font-medium text-sm rounded-md transition-colors"
               >
                 {isLoading ? "Carregando..." : "Entrar"}
               </Button>
@@ -148,12 +148,12 @@ export function LoginForm() {
         </Form>
       </CardContent>
 
-      <CardFooter>
-        <p className="text-center text-xs text-zinc-600">
+      <CardFooter className="pt-0">
+        <p className="w-full text-center text-xs text-zinc-500">
           Não tem uma conta?{" "}
           <Link
             href="/register"
-            className="text-blue-600 hover:text-blue-500 font-medium"
+            className="text-zinc-900 hover:text-zinc-700 font-medium underline-offset-4 hover:underline"
           >
             Registre-se
           </Link>
