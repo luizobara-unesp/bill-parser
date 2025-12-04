@@ -10,7 +10,7 @@ import { ConsumptionReport } from "@/types/report";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 
-export default function ReportsPage() {
+export default function ConsumptionReportsPage() {
   const [data, setData] = useState<ConsumptionReport[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   

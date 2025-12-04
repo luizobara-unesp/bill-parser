@@ -91,7 +91,7 @@ export default function HistoryReportPage() {
             </p>
           </div>
 
-          <div className="w-full md:w-[300px]">
+          <div>
             {isLoadingBills ? (
               <div className="h-10 w-full bg-muted animate-pulse rounded-md" />
             ) : (
