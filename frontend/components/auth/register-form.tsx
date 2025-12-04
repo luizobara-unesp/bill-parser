@@ -71,12 +71,12 @@ export function RegisterForm() {
   };
 
   return (
-    <Card className="w-full max-w-xs md:max-w-md h-96 bg-white border border-zinc-200 text-zinc-900 shadow-sm gap-0">
-      <CardHeader className="text-center gap-0">
-        <CardTitle className="text-2xl font-semibold">
+    <Card className="w-full max-w-xs md:max-w-md h-96 bg-white/90 border border-zinc-200/80 text-zinc-900 shadow-lg shadow-zinc-900/5 backdrop-blur-sm gap-0">
+      <CardHeader className="text-center gap-1 pb-3">
+        <CardTitle className="text-2xl font-semibold tracking-tight text-zinc-900">
           Criar sua conta
         </CardTitle>
-        <CardDescription className="text-xs text-zinc-600">
+        <CardDescription className="text-xs text-zinc-500">
           Comece a usar o Bill Parser em poucos segundos.
         </CardDescription>
       </CardHeader>
@@ -85,15 +85,15 @@ export function RegisterForm() {
         <Form {...form}>
           <form
             onSubmit={form.handleSubmit(onSubmit)}
-            className="flex flex-col h-full space-y-3"
+            className="flex flex-col h-full md:space-y-2 space-y-1"
           >
             <FormField
               control={form.control}
               name="fullName"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="text-sm text-zinc-800">
-                    Nome Completo
+                  <FormLabel className="text-xs font-medium text-zinc-700 uppercase tracking-wide">
+                    Nome completo
                   </FormLabel>
                   <FormControl>
                     <Input
@@ -101,7 +101,7 @@ export function RegisterForm() {
                       type="text"
                       autoComplete="name"
                       placeholder="Seu nome completo"
-                      className="bg-white border-zinc-200 text-zinc-900 placeholder:text-zinc-400 focus-visible:ring-zinc-800"
+                      className="bg-white border-zinc-200 text-zinc-900 placeholder:text-zinc-400 focus-visible:ring-1 focus-visible:ring-zinc-900 focus-visible:border-zinc-900/80 transition-colors"
                     />
                   </FormControl>
                   <FormMessage className="text-xs" />
@@ -114,14 +114,16 @@ export function RegisterForm() {
               name="email"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="text-sm text-zinc-800">Email</FormLabel>
+                  <FormLabel className="text-xs font-medium text-zinc-700 uppercase tracking-wide">
+                    Email
+                  </FormLabel>
                   <FormControl>
                     <Input
                       {...field}
                       type="email"
                       autoComplete="email"
                       placeholder="seu@email.com"
-                      className="bg-white border-zinc-200 text-zinc-900 placeholder:text-zinc-400 focus-visible:ring-zinc-800"
+                      className="bg-white border-zinc-200 text-zinc-900 placeholder:text-zinc-400 focus-visible:ring-1 focus-visible:ring-zinc-900 focus-visible:border-zinc-900/80 transition-colors"
                     />
                   </FormControl>
                   <FormMessage className="text-xs" />
@@ -134,14 +136,16 @@ export function RegisterForm() {
               name="password"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="text-sm text-zinc-800">Senha</FormLabel>
+                  <FormLabel className="text-xs font-medium text-zinc-700 uppercase tracking-wide">
+                    Senha
+                  </FormLabel>
                   <FormControl>
                     <Input
                       {...field}
                       type="password"
                       autoComplete="new-password"
                       placeholder="Crie uma senha"
-                      className="bg-white border-zinc-200 text-zinc-900 placeholder:text-zinc-400 focus-visible:ring-zinc-800"
+                      className="bg-white border-zinc-200 text-zinc-900 placeholder:text-zinc-400 focus-visible:ring-1 focus-visible:ring-zinc-900 focus-visible:border-zinc-900/80 transition-colors"
                     />
                   </FormControl>
                   <FormMessage className="text-xs" />
@@ -150,7 +154,7 @@ export function RegisterForm() {
             />
 
             {error && (
-              <Alert className="border-red-500/60 bg-red-500/5 text-red-600">
+              <Alert className="border-red-500/60 bg-red-50 text-red-600 text-xs">
                 <AlertDescription>{error}</AlertDescription>
               </Alert>
             )}
@@ -159,7 +163,7 @@ export function RegisterForm() {
               <Button
                 type="submit"
                 disabled={isLoading}
-                className="w-full bg-blue-600 text-white hover:bg-blue-500 font-medium"
+                className="w-full bg-zinc-900 text-white hover:bg-zinc-800 disabled:opacity-60 disabled:cursor-not-allowed font-medium text-sm rounded-md transition-colors"
               >
                 {isLoading ? "Criando conta..." : "Registrar"}
               </Button>
@@ -167,12 +171,13 @@ export function RegisterForm() {
           </form>
         </Form>
       </CardContent>
-      <CardFooter>
-        <p className="text-center text-xs text-zinc-600">
+
+      <CardFooter className="pt-0">
+        <p className="w-full text-center text-xs text-zinc-500">
           Já tem uma conta?{" "}
           <Link
             href="/login"
-            className="text-blue-600 hover:text-blue-500 font-medium"
+            className="text-zinc-900 hover:text-zinc-700 font-medium underline-offset-4 hover:underline"
           >
             Entre aqui
           </Link>
