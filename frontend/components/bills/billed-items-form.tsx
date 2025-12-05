@@ -23,6 +23,7 @@ export function BilledItemsForm({ control, register }: BilledItemsFormProps) {
       <div className="flex justify-between items-center">
         <h3 className="text-lg font-medium">Detalhamento da Fatura</h3>
         <Button
+          type="button"
           variant="outline"
           size="sm"
           onClick={() =>
@@ -80,6 +81,7 @@ export function BilledItemsForm({ control, register }: BilledItemsFormProps) {
                 </TableCell>
                 <TableCell>
                   <Button
+                    type="button"
                     variant="ghost"
                     size="icon"
                     className="text-red-500 hover:text-red-700 hover:bg-red-50"

@@ -1,6 +1,5 @@
 "use client";
 
-import { useEffect } from "react";
 import { Input } from "@/components/ui/input";
 import { AnaliseCompletaConta } from "@/types/bill";
 import { Control, useFieldArray, UseFormRegister } from "react-hook-form";
@@ -27,21 +26,6 @@ function HistorySection({
   register: UseFormRegister<AnaliseCompletaConta>;
 }) {
   const { fields, append, remove } = useFieldArray({ control, name });
-
-  useEffect(() => {
-    if (fields.length < 12) {
-      const itemsToAdd = 12 - fields.length;
-      const isDemand = name.includes("demanda");
-
-      const emptyRows = Array.from({ length: itemsToAdd }).map(() => ({
-        mes_referencia: "",
-        dias: 0,
-        ...(isDemand ? { demanda_kw: 0 } : { consumo_kwh: 0 }),
-      }));
-
-      append(emptyRows as any);
-    }
-  }, [fields.length, append, name]);
 
   return (
     <div className="space-y-2 flex flex-col h-full">
