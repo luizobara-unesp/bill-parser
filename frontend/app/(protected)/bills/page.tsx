@@ -1,7 +1,10 @@
 "use client"; 
 
+import Link from "next/link";
 import { toast } from "sonner";
+import { PlusCircle } from "lucide-react";
 import { useEffect, useState } from "react";
+import { Button } from "@/components/ui/button";
 import { BillSavedResponse } from "@/types/bill";
 import { getBills } from "@/services/billService";
 import { PageGuard } from "@/components/page-guard";
@@ -50,6 +53,13 @@ export default function BillPage() {
       <div className="w-full p-6 mx-auto">
         <div className="flex justify-between items-center mb-6">
            <h3 className="font-bold text-2xl uppercase">Contas de Consumo</h3>
+           
+           <Link href="/bills/create">
+             <Button variant="outline" className="gap-2">
+               <PlusCircle className="h-4 w-4"/> 
+               Manual
+             </Button>
+           </Link>
         </div>
         
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
