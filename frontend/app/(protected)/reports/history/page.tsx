@@ -32,14 +32,20 @@ export default function HistoryReportPage() {
   const [isLoadingBills, setIsLoadingBills] = useState(true);
   const [isLoadingChart, setIsLoadingChart] = useState(false);
 
-  
   const { activeWorkspace } = useWorkspace();
 
   useEffect(() => {
     async function loadBills() {
+      if (!activeWorkspace) return;
+      setIsLoadingBills(true);
+
       try {
-        if (!activeWorkspace) return;
-        const data = await getBills({ workspaceId: activeWorkspace.id, page: 0, size: 20 });
+        const data = await getBills({
+          workspaceId: activeWorkspace.id,
+          page: 0,
+          size: 20,
+        });
+
         setBills(data.content);
 
         if (data.content.length > 0) {
@@ -52,8 +58,9 @@ export default function HistoryReportPage() {
         setIsLoadingBills(false);
       }
     }
+
     loadBills();
-  }, []);
+  }, [activeWorkspace]);
 
   useEffect(() => {
     if (!selectedBillId) return;
@@ -76,6 +83,16 @@ export default function HistoryReportPage() {
 
     loadHistory();
   }, [selectedBillId]);
+
+  if (!activeWorkspace) {
+    return (
+      <PageGuard>
+        <div className="flex h-[400px] w-full items-center justify-center">
+          <Loader2 className="h-10 w-10 animate-spin text-primary" />
+        </div>
+      </PageGuard>
+    );
+  }
 
   return (
     <PageGuard>

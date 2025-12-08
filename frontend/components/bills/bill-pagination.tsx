@@ -11,7 +11,7 @@ import {
 } from "@/components/ui/pagination";
 
 interface BillPaginationProps {
-  currentPage: number; // Começa em 0 (padrão Spring Boot)
+  currentPage: number;
   totalPages: number;
   onPageChange: (page: number) => void;
 }
@@ -21,21 +21,17 @@ export function BillPagination({
   totalPages,
   onPageChange,
 }: BillPaginationProps) {
-  // Função auxiliar para evitar o refresh da página ao clicar no link
   const handlePageChange = (e: React.MouseEvent, page: number) => {
-    e.preventDefault(); // Impede o comportamento padrão do <a>
+    e.preventDefault();
     if (page >= 0 && page < totalPages) {
       onPageChange(page);
     }
   };
 
-  // Lógica para gerar os números das páginas (simples)
-  // Se tiver muitas páginas, mostra o início, o atual e o fim.
   const renderPageNumbers = () => {
     const pages = [];
-    const showMax = 5; // Quantos botões numéricos mostrar no máximo
+    const showMax = 5;
 
-    // Lógica simplificada de "janela deslizante"
     let startPage = Math.max(0, currentPage - 2);
     let endPage = Math.min(totalPages - 1, startPage + showMax - 1);
 
@@ -43,7 +39,6 @@ export function BillPagination({
       startPage = Math.max(0, endPage - showMax + 1);
     }
 
-    // Adiciona primeira página se estiver longe
     if (startPage > 0) {
       pages.push(
         <PaginationItem key="first">
@@ -61,7 +56,6 @@ export function BillPagination({
       }
     }
 
-    // Páginas centrais
     for (let i = startPage; i <= endPage; i++) {
       pages.push(
         <PaginationItem key={i}>
@@ -76,7 +70,6 @@ export function BillPagination({
       );
     }
 
-    // Adiciona última página se estiver longe
     if (endPage < totalPages - 1) {
       if (endPage < totalPages - 2) {
         pages.push(
@@ -105,7 +98,6 @@ export function BillPagination({
   return (
     <Pagination className="mt-8">
       <PaginationContent>
-        {/* Botão Anterior */}
         <PaginationItem>
           <PaginationPrevious
             href="#"
@@ -115,10 +107,8 @@ export function BillPagination({
           />
         </PaginationItem>
 
-        {/* Números das Páginas */}
         {renderPageNumbers()}
 
-        {/* Botão Próximo */}
         <PaginationItem>
           <PaginationNext
             href="#"
