@@ -59,11 +59,11 @@ export function BillCard({ bill, onDeleted }: BillCardProps) {
 
   return (
     <Card
-      className="hover:shadow-md transition-shadow cursor-pointer"
+      className="hover:shadow-md transition-shadow cursor-pointer px-2 gap-2"
       onClick={() => router.push(`/bills/${bill.id}`)}
     >
-      <CardHeader className="pb-2">
-        <CardTitle className="flex justify-between items-start">
+      <CardHeader className="pb-0 gap-0 px-3">
+        <CardTitle className="flex justify-between items-start p-0 m-0">
           <span className="text-lg font-bold text-primary">
             {bill.mesReferenciaGeral}
           </span>
@@ -71,7 +71,7 @@ export function BillCard({ bill, onDeleted }: BillCardProps) {
         </CardTitle>
       </CardHeader>
 
-      <CardContent>
+      <CardContent className="px-3">
         <div className="space-y-2">
           <div className="flex items-center text-2xl font-bold text-green-600">
             <DollarSign className="h-5 w-5 mr-1" />
@@ -86,9 +86,7 @@ export function BillCard({ bill, onDeleted }: BillCardProps) {
         </div>
       </CardContent>
 
-      <CardFooter className="pt-0 justify-between flex">
-        <span className="text-xs text-gray-400">ID: {bill.id}</span>
-
+      <CardFooter className="pt-0 justify-end flex px-0">
         <AlertDialog>
           <AlertDialogTrigger asChild>
             <Button

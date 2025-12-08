@@ -13,33 +13,39 @@ import { toast } from "sonner";
 export default function ConsumptionReportsPage() {
   const [data, setData] = useState<ConsumptionReport[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  
+
   const { activeWorkspace } = useWorkspace();
 
-  useEffect(() => {
-    async function loadData() {
-      try {
-        if (!activeWorkspace) return;
-
-        const workspaceId = activeWorkspace.id;
-        
-        const reportData = await getConsumptionReport(workspaceId);
-        setData(reportData);
-      } catch (error) {
-        console.error(error);
-        toast.error("Erro ao carregar relatórios.");
-      } finally {
-        setIsLoading(false);
-      }
+  const fetchReports = async () => {
+    try {
+      if (!activeWorkspace) return;
+      const workspaceId = activeWorkspace.id;
+      const reportData = await getConsumptionReport(workspaceId);
+      setData(reportData);
+    } catch (error) {
+      console.error(error);
+      toast.error("Erro ao carregar relatórios.");
+    } finally {
+      setIsLoading(false);
     }
-    loadData();
-  }, []);
+  };
 
-  if (isLoading) {
+  useEffect(() => {
+    if (!activeWorkspace) return;
+    fetchReports();
+  }, [activeWorkspace]);
+
+  if (!activeWorkspace) {
     return (
-      <div className="flex h-[80vh] items-center justify-center">
-        <Loader2 className="h-10 w-10 animate-spin text-primary" />
-      </div>
+      <PageGuard>
+        <div className="w-full p-6 mx-auto">
+          <div className="flex justify-between items-center mb-6">
+            <h3 className="text-3xl font-bold tracking-tight">
+              Relatórios Gerencias
+            </h3>
+          </div>
+        </div>
+      </PageGuard>
     );
   }
 
@@ -63,7 +69,7 @@ export default function ConsumptionReportsPage() {
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           <ConsumptionChart data={data} />
-          
+
           <FinancialChart data={data} />
         </div>
       </div>
