@@ -13,6 +13,8 @@ import { Button } from "@/components/ui/button";
 import { BillSavedResponse } from "@/types/bill";
 import { deleteBill } from "@/services/billService";
 
+import { formatMonthReference } from "@/utils/formatDate";
+
 import { 
   AlertDialog, 
   AlertDialogAction, 
@@ -79,7 +81,7 @@ export function BillCard({ bill, onDeleted }: BillCardProps) {
           </div>
           <div className="flex items-center text-sm text-muted-foreground">
             <Calendar className="h-4 w-4 mr-2" />
-            Mês Referencia: {formatDate(bill.mesReferenciaGeral)}
+            Mês Referencia: {formatMonthReference(bill.mesReferenciaGeral)}
           </div>
         </div>
       </CardContent>
