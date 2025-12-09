@@ -8,13 +8,13 @@ services:
     ports:
       - "5432:5432"
     environment:
-      POSTGRES_DB: bill_parser_db
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: senha_forte_para_producao
+      POSTGRES_DB: ${DB_NAME}
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
     volumes:
       - postgres_data:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgres -d bill_parser_db"]
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER} -d ${DB_NAME}"]
       interval: 5s
       timeout: 5s
       retries: 5
@@ -33,6 +33,9 @@ services:
       - ./backend/.env
     environment:
       - EXTRACTOR_API_URL=http://extractor:8000
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres-db:5432/${DB_NAME}
+      - SPRING_DATASOURCE_USERNAME=${DB_USER}
+      - SPRING_DATASOURCE_PASSWORD=${DB_PASSWORD}
     depends_on:
       postgres-db:
         condition: service_healthy
@@ -93,8 +96,8 @@ services:
       - "9000:9000"
       - "9001:9001"
     environment:
-      MINIO_ROOT_USER: minioadmin
-      MINIO_ROOT_PASSWORD: minioadminpassword
+      MINIO_ROOT_USER: ${MINIO_USER}
+      MINIO_ROOT_PASSWORD: ${MINIO_PASSWORD}
     volumes:
       - minio_data:/data
     command: server /data --console-address ":9001"
