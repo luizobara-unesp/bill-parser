@@ -1,24 +1,24 @@
-
 services:
   # ----------------------------------
   # 1. Banco de Dados (PostgreSQL)
   # ----------------------------------
   postgres-db:
     image: postgres:16-alpine
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgres"]
-      interval: 5s
-      timeout: 5s
-      retries: 5
     container_name: bill_parser_postgres_db
     ports:
-      - "5432:5432" 
+      - "5432:5432"
     environment:
       POSTGRES_DB: bill_parser_db
       POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: senha_forte_para_producao 
+      POSTGRES_PASSWORD: senha_forte_para_producao
     volumes:
       - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d bill_parser_db"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
 
   # ----------------------------------
   # 2. Backend (Spring Boot)
@@ -29,17 +29,25 @@ services:
     container_name: bill_parser_backend
     ports:
       - "8080:8080"
-    
     env_file:
       - ./backend/.env
-      
-    depends_on:
-      - postgres-db
-      - extractor
-      - createbuckets
-    
     environment:
       - EXTRACTOR_API_URL=http://extractor:8000
+    depends_on:
+      postgres-db:
+        condition: service_healthy
+      minio:
+        condition: service_healthy
+      extractor:
+        condition: service_healthy
+      createbuckets:
+        condition: service_completed_successfully
+    healthcheck:
+      test: "wget --no-verbose --tries=1 --spider http://localhost:8080/actuator/health || exit 1"
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 30s
 
   # ----------------------------------
   # 3. Frontend (Next.js)
@@ -53,7 +61,8 @@ services:
     environment:
       - NEXT_PUBLIC_API_URL=http://localhost:8080/api
     depends_on:
-      - backend 
+      backend:
+        condition: service_healthy
 
   # ----------------------------------
   # 4. Extrator (FastAPI)
@@ -68,6 +77,11 @@ services:
       - ./extrator-service/.env
     volumes:
       - ./extrator-service/app:/code/app
+    healthcheck:
+      test: ["CMD", "python3", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/').getcode() == 200"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
 
   # ----------------------------------
   # 5. Object Storage (MinIO)
@@ -84,6 +98,11 @@ services:
     volumes:
       - minio_data:/data
     command: server /data --console-address ":9001"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
 
   # ----------------------------------
   # 6. Create Buckets
@@ -91,11 +110,12 @@ services:
   createbuckets:
     image: minio/mc
     depends_on:
-      - minio
+      minio:
+        condition: service_healthy
     entrypoint: >
       /bin/sh -c "
-      until (/usr/bin/mc config host add myminio http://minio:9000 minioadmin minioadminpassword); do echo '...waiting...' && sleep 1; done;
-      /usr/bin/mc mb myminio/bill-parser-bucket;
+      /usr/bin/mc config host add myminio http://minio:9000 minioadmin minioadminpassword;
+      /usr/bin/mc mb --ignore-existing myminio/bill-parser-bucket;
       /usr/bin/mc anonymous set download myminio/bill-parser-bucket;
       exit 0;
       "
